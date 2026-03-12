@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 import { gsap } from 'gsap';
+import { useRouter } from 'next/navigation';
 
 export interface BentoCardProps {
   color?: string;
@@ -9,6 +10,7 @@ export interface BentoCardProps {
   label?: string;
   textAutoHide?: boolean;
   disableAnimations?: boolean;
+  href?: string;
 }
 
 export interface BentoProps {
@@ -35,37 +37,43 @@ const cardData: BentoCardProps[] = [
     color: '#060010',
     title: 'Test',
     description: 'Track your test analytics and monitor your health trends over time.',
-    label: 'Test analytics'
+    label: 'Test analytics',
+    href: '/test'
   },
   {
     color: '#060010',
     title: 'Dashboard',
     description: 'Centralized data view',
-    label: 'Overview dashboard'
+    label: 'Overview dashboard',
+    href: '/dashboard'
   },
   {
     color: '#060010',
     title: 'Collaboration',
     description: 'store and manage medical records',
-    label: 'Prescriptions'
+    label: 'Prescriptions',
+    href: '/prescriptions'
   },
   {
     color: '#060010',
     title: 'Medicines prescribed',
     description: 'Track your prescribed medicines and their details in one organized place.',
-    label: 'Medical insights'
+    label: 'Medical insights',
+    href: '/medicines'
   },
   {
     color: '#060010',
     title: 'Links',
     description: 'Generate shareable links for prescriptions and medical documents',
-    label: 'Share Records'
+    label: 'Share Records',
+    href: '/share'
   },
   {
     color: '#060010',
     title: 'AI Assistance',
     description: 'get insights on doctor advice and medications to better understand treatments and possible precautions',
-    label: 'use AI for free'
+    label: 'use AI for free',
+    href: '/ai'
   }
 ];
 
@@ -113,6 +121,7 @@ const ParticleCard: React.FC<{
   enableTilt?: boolean;
   clickEffect?: boolean;
   enableMagnetism?: boolean;
+  href?: string;
 }> = ({
   children,
   className = '',
@@ -122,7 +131,8 @@ const ParticleCard: React.FC<{
   glowColor = DEFAULT_GLOW_COLOR,
   enableTilt = true,
   clickEffect = false,
-  enableMagnetism = false
+  enableMagnetism = false,
+  href
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const particlesRef = useRef<HTMLDivElement[]>([]);
@@ -131,6 +141,7 @@ const ParticleCard: React.FC<{
   const memoizedParticles = useRef<HTMLDivElement[]>([]);
   const particlesInitialized = useRef(false);
   const magnetismAnimationRef = useRef<gsap.core.Tween | null>(null);
+  const router = useRouter();
 
   const initializeParticles = useCallback(() => {
     if (particlesInitialized.current || !cardRef.current) return;
@@ -280,6 +291,12 @@ const ParticleCard: React.FC<{
     };
 
     const handleClick = (e: MouseEvent) => {
+      // Navigate to href if provided
+      if (href) {
+        router.push(href);
+        return;
+      }
+
       if (!clickEffect) return;
 
       const rect = element.getBoundingClientRect();
@@ -310,10 +327,7 @@ const ParticleCard: React.FC<{
 
       gsap.fromTo(
         ripple,
-        {
-          scale: 0,
-          opacity: 1
-        },
+        { scale: 0, opacity: 1 },
         {
           scale: 1,
           opacity: 0,
@@ -337,12 +351,12 @@ const ParticleCard: React.FC<{
       element.removeEventListener('click', handleClick);
       clearAllParticles();
     };
-  }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor]);
+  }, [animateParticles, clearAllParticles, disableAnimations, enableTilt, enableMagnetism, clickEffect, glowColor, href, router]);
 
   return (
     <div
       ref={cardRef}
-      className={`${className} relative overflow-hidden`}
+      className={`${className} relative overflow-hidden ${href ? 'cursor-pointer' : ''}`}
       style={{ ...style, position: 'relative', overflow: 'hidden' }}
     >
       {children}
@@ -405,11 +419,7 @@ const GlobalSpotlight: React.FC<{
       const cards = gridRef.current.querySelectorAll('.card');
 
       if (!mouseInside) {
-        gsap.to(spotlightRef.current, {
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.out'
-        });
+        gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3, ease: 'power2.out' });
         cards.forEach(card => {
           (card as HTMLElement).style.setProperty('--glow-intensity', '0');
         });
@@ -440,12 +450,7 @@ const GlobalSpotlight: React.FC<{
         updateCardGlowProperties(cardElement, e.clientX, e.clientY, glowIntensity, spotlightRadius);
       });
 
-      gsap.to(spotlightRef.current, {
-        left: e.clientX,
-        top: e.clientY,
-        duration: 0.1,
-        ease: 'power2.out'
-      });
+      gsap.to(spotlightRef.current, { left: e.clientX, top: e.clientY, duration: 0.1, ease: 'power2.out' });
 
       const targetOpacity =
         minDistance <= proximity
@@ -467,11 +472,7 @@ const GlobalSpotlight: React.FC<{
         (card as HTMLElement).style.setProperty('--glow-intensity', '0');
       });
       if (spotlightRef.current) {
-        gsap.to(spotlightRef.current, {
-          opacity: 0,
-          duration: 0.3,
-          ease: 'power2.out'
-        });
+        gsap.to(spotlightRef.current, { opacity: 0, duration: 0.3, ease: 'power2.out' });
       }
     };
 
@@ -506,10 +507,8 @@ const useMobileDetection = () => {
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
-
     checkMobile();
     window.addEventListener('resize', checkMobile);
-
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
@@ -532,6 +531,7 @@ const MagicBento: React.FC<BentoProps> = ({
   const gridRef = useRef<HTMLDivElement>(null);
   const isMobile = useMobileDetection();
   const shouldDisableAnimations = disableAnimations || isMobile;
+  const router = useRouter();
 
   return (
     <>
@@ -678,7 +678,7 @@ const MagicBento: React.FC<BentoProps> = ({
           {cardData.map((card, index) => {
             const baseClassName = `card flex flex-col justify-between relative aspect-[4/3] min-h-[200px] w-full max-w-full p-5 rounded-[20px] border border-solid font-light overflow-hidden transition-colors duration-300 ease-in-out hover:-translate-y-0.5 hover:shadow-[0_8px_25px_rgba(0,0,0,0.15)] ${
               enableBorderGlow ? 'card--border-glow' : ''
-            }`;
+            } ${card.href ? 'cursor-pointer' : ''}`;
 
             const cardStyle = {
               backgroundColor: card.color || 'var(--background-dark)',
@@ -689,6 +689,22 @@ const MagicBento: React.FC<BentoProps> = ({
               '--glow-intensity': '0',
               '--glow-radius': '200px'
             } as React.CSSProperties;
+
+            const cardContent = (
+              <>
+                <div className="card__header flex justify-between gap-3 relative text-white">
+                  <span className="card__label text-base">{card.label}</span>
+                </div>
+                <div className="card__content flex flex-col relative text-white">
+                  <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
+                    {card.title}
+                  </h3>
+                  <p className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}>
+                    {card.description}
+                  </p>
+                </div>
+              </>
+            );
 
             if (enableStars) {
               return (
@@ -702,20 +718,9 @@ const MagicBento: React.FC<BentoProps> = ({
                   enableTilt={enableTilt}
                   clickEffect={clickEffect}
                   enableMagnetism={enableMagnetism}
+                  href={card.href}
                 >
-                  <div className="card__header flex justify-between gap-3 relative text-white">
-                    <span className="card__label text-base">{card.label}</span>
-                  </div>
-                  <div className="card__content flex flex-col relative text-white">
-                    <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
-                      {card.title}
-                    </h3>
-                    <p
-                      className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}
-                    >
-                      {card.description}
-                    </p>
-                  </div>
+                  {cardContent}
                 </ParticleCard>
               );
             }
@@ -725,6 +730,9 @@ const MagicBento: React.FC<BentoProps> = ({
                 key={index}
                 className={baseClassName}
                 style={cardStyle}
+                onClick={() => {
+                  if (card.href) router.push(card.href);
+                }}
                 ref={el => {
                   if (!el) return;
 
@@ -740,58 +748,33 @@ const MagicBento: React.FC<BentoProps> = ({
                     if (enableTilt) {
                       const rotateX = ((y - centerY) / centerY) * -10;
                       const rotateY = ((x - centerX) / centerX) * 10;
-
-                      gsap.to(el, {
-                        rotateX,
-                        rotateY,
-                        duration: 0.1,
-                        ease: 'power2.out',
-                        transformPerspective: 1000
-                      });
+                      gsap.to(el, { rotateX, rotateY, duration: 0.1, ease: 'power2.out', transformPerspective: 1000 });
                     }
 
                     if (enableMagnetism) {
                       const magnetX = (x - centerX) * 0.05;
                       const magnetY = (y - centerY) * 0.05;
-
-                      gsap.to(el, {
-                        x: magnetX,
-                        y: magnetY,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                      });
+                      gsap.to(el, { x: magnetX, y: magnetY, duration: 0.3, ease: 'power2.out' });
                     }
                   };
 
                   const handleMouseLeave = () => {
                     if (shouldDisableAnimations) return;
-
-                    if (enableTilt) {
-                      gsap.to(el, {
-                        rotateX: 0,
-                        rotateY: 0,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                      });
-                    }
-
-                    if (enableMagnetism) {
-                      gsap.to(el, {
-                        x: 0,
-                        y: 0,
-                        duration: 0.3,
-                        ease: 'power2.out'
-                      });
-                    }
+                    if (enableTilt) gsap.to(el, { rotateX: 0, rotateY: 0, duration: 0.3, ease: 'power2.out' });
+                    if (enableMagnetism) gsap.to(el, { x: 0, y: 0, duration: 0.3, ease: 'power2.out' });
                   };
 
                   const handleClick = (e: MouseEvent) => {
+                    if (card.href) {
+                      router.push(card.href);
+                      return;
+                    }
+
                     if (!clickEffect || shouldDisableAnimations) return;
 
                     const rect = el.getBoundingClientRect();
                     const x = e.clientX - rect.left;
                     const y = e.clientY - rect.top;
-
                     const maxDistance = Math.max(
                       Math.hypot(x, y),
                       Math.hypot(x - rect.width, y),
@@ -811,23 +794,8 @@ const MagicBento: React.FC<BentoProps> = ({
                       pointer-events: none;
                       z-index: 1000;
                     `;
-
                     el.appendChild(ripple);
-
-                    gsap.fromTo(
-                      ripple,
-                      {
-                        scale: 0,
-                        opacity: 1
-                      },
-                      {
-                        scale: 1,
-                        opacity: 0,
-                        duration: 0.8,
-                        ease: 'power2.out',
-                        onComplete: () => ripple.remove()
-                      }
-                    );
+                    gsap.fromTo(ripple, { scale: 0, opacity: 1 }, { scale: 1, opacity: 0, duration: 0.8, ease: 'power2.out', onComplete: () => ripple.remove() });
                   };
 
                   el.addEventListener('mousemove', handleMouseMove);
@@ -835,17 +803,7 @@ const MagicBento: React.FC<BentoProps> = ({
                   el.addEventListener('click', handleClick);
                 }}
               >
-                <div className="card__header flex justify-between gap-3 relative text-white">
-                  <span className="card__label text-base">{card.label}</span>
-                </div>
-                <div className="card__content flex flex-col relative text-white">
-                  <h3 className={`card__title font-normal text-base m-0 mb-1 ${textAutoHide ? 'text-clamp-1' : ''}`}>
-                    {card.title}
-                  </h3>
-                  <p className={`card__description text-xs leading-5 opacity-90 ${textAutoHide ? 'text-clamp-2' : ''}`}>
-                    {card.description}
-                  </p>
-                </div>
+                {cardContent}
               </div>
             );
           })}
