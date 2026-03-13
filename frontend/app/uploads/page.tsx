@@ -14,11 +14,9 @@ const UploadPage: React.FC = () => {
     return (
       <div className="min-h-screen flex items-center justify-center bg-linear-to-br from-purple-950 via-black to-indigo-950">
         <div className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl shadow-2xl p-10 text-center max-w-md w-full">
-          
           <h1 className="text-3xl font-bold text-white mb-4">
             🔒 Access Restricted
           </h1>
-
           <p className="text-gray-300 mb-8">
             You need to sign in to upload and use this feature.
           </p>
@@ -29,7 +27,6 @@ const UploadPage: React.FC = () => {
           >
             Sign In
           </button>
-
         </div>
       </div>
     );

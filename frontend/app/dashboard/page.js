@@ -5,7 +5,7 @@ export default function Dashboard() {
     <div className="flex min-h-screen justify-center text-black bg-gray-100">
 
       {/* Sidebar */}
-      <aside className="w-64 bg-white shadow-md p-6">
+      <aside className="md:w-64 bg-white shadow-md p-6 ">
         <h2 className="text-2xl font-bold mb-8">MyApp</h2>
 
         <nav className="flex flex-col gap-4">
@@ -16,17 +16,16 @@ export default function Dashboard() {
         </nav>
       </aside>
 
-      {/* Main */}
       <main className="flex-1 p-8">
 
-        {/* Top Bar */}
+
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-semibold">Dashboard</h1>
+          <h1 className="text-2xl md:text-3xl font-semibold">Dashboard</h1>
           <UserButton afterSignOutUrl="/sign-in" />
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-3 gap-6 mb-10">
+        <div className="flex flex-col   md:grid grid-cols-3 gap-6 mb-10">
           
           <div className="bg-white p-6 rounded-xl shadow">
             <h3 className="text-gray-500">Total Orders</h3>
