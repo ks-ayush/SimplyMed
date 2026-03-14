@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 const prescriptionSchema = new mongoose.Schema({
 
   userId: String,
+
+  description : String,
   
   images: [
     {
