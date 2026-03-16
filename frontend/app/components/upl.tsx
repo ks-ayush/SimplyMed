@@ -59,7 +59,7 @@ const cardData: BentoCardProps[] = [
     title: 'Medicines prescribed',
     description: 'Track your prescribed medicines and their details in one organized place.',
     label: 'Medical insights',
-    href: '/medicines'
+    href: '/insights'
   },
   {
     color: '#060010',

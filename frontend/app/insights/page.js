@@ -4,7 +4,7 @@ import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 
 
-const PrescriptionPage = () => {
+const InsightsPage = () => {
   const { userId } = useAuth();
   const [add, setAdd] = useState(false);
   const [image, setImage] = useState(null);
@@ -103,10 +103,10 @@ const PrescriptionPage = () => {
     <main className="min-h-screen bg-gray-100">
       <div className="container mx-auto py-10 flex justify-center items-center flex-col">
         <h1 className="text-3xl text-black font-bold mb-6">
-          Prescription Page
+          Medical insights Page
         </h1>
         <p className="text-gray-700">
-          This is where you can view and manage your prescriptions.
+          This is where you can view and manage your medical insights.
         </p>
       </div>
 
@@ -115,11 +115,11 @@ const PrescriptionPage = () => {
           onClick={() => setAdd(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Add Prescription
+          Add Medical Insights
         </button>
 
         <button onClick={handleViewPrescriptions} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-4">
-          View Prescriptions
+          View Medical Insights
         </button>
       </div>
 
@@ -127,14 +127,14 @@ const PrescriptionPage = () => {
         <div className="container mx-auto py-16 flex justify-center items-center flex-col">
 
           <h2 className="text-3xl text-blue-600 font-bold mb-6">
-            Upload Prescription
+            Upload Prescribed Medicines
           </h2>
 
           <form className="w-full max-w-md bg-white shadow-xl rounded-xl p-6 border">
 
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-3">
-                Prescription Image
+                Prescribed Medicines Image
               </label>
 
               <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
@@ -147,7 +147,7 @@ const PrescriptionPage = () => {
                   />
                 ) : (
                   <span className="text-gray-500 text-sm">
-                    Click to Upload Prescription Image
+                    Click to Upload Prescribed Medicines Image
                   </span>
                 )}
 
@@ -169,14 +169,14 @@ const PrescriptionPage = () => {
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="border border-b-gray-500 my-3.5 text-black w-full rounded-md pt-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-b-gray-500 my-3.5 h-24 text-black w-full rounded-md pt-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 type="text"
-                placeholder="Enter prescription description"
+                placeholder="Enter medical insights or notes about the medicines"
               />
             </div>
 
             <div className="flex justify-center gap-10">
-              <button type="button" onClick={handleAddPrescription} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Save Prescription </button>
+              <button type="button" onClick={handleAddPrescription} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Save Insights </button>
               <button type="button" onClick={() => setAdd(false)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Close </button> </div>
 
           </form>
@@ -187,12 +187,12 @@ const PrescriptionPage = () => {
         <div className="container mx-auto py-12">
 
           <h2 className="text-3xl font-bold text-center mb-10 text-blue-600">
-            Your Prescriptions
+            Your Medical Insights
           </h2>
 
           {prescriptions.length === 0 ? (
             <p className="text-center text-gray-500">
-              No prescriptions uploaded yet.
+              No medical insights uploaded yet.
             </p>
           ) : (
             <div className="mx-3 grid md:grid-cols-3 gap-8">
@@ -277,4 +277,4 @@ const PrescriptionPage = () => {
   );
 };
 
-export default PrescriptionPage;
+export default InsightsPage;

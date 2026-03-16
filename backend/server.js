@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import prescriptionrouter from "./routes/prescriptionrouter.js";
-
+import insightsrouter from "./routes/insightsrouter.js";
 dotenv.config();
 const app = express();
 
@@ -27,6 +27,7 @@ app.get("/", (req, res) => {
 
 
 app.use("/prescriptions", prescriptionrouter);
+app.use("/insights", insightsrouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);
