@@ -1,9 +1,10 @@
 import express from "express";
-import Prescription from "../models/prescription.js";
+import Test from "../models/tests.js";
 import { upload } from "../config/multer.js";
 import cloudinary from "../config/cloudinary.js";
 
 const router = express.Router();
+
 
 router.post("/upload", upload.single("image"), async (req, res) => {
   try {
@@ -12,10 +13,11 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       return res.status(400).json({ message: "No image uploaded" });
     }
 
+   
     const streamUpload = () => {
       return new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
-          { folder: "prescriptions" },
+          { folder: "tests" },
           (error, result) => {
             if (result) resolve(result);
             else reject(error);
@@ -27,21 +29,20 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
     const result = await streamUpload();
 
-
-    const prescription = new Prescription({
+    const test = new Test({
       userId: req.body.userId,
       description: req.body.description,
       images: [
         {
           url: result.secure_url,
-          public_id: result.public_id
+          public_id: result.public_id   
         }
       ],
     });
 
-    await prescription.save();
+    await test.save();
 
-    res.json(prescription);
+    res.json(test);
 
   } catch (error) {
     console.log(error);
@@ -49,44 +50,45 @@ router.post("/upload", upload.single("image"), async (req, res) => {
   }
 });
 
+
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const tests = await Test.find({
+      userId: req.params.userId
+    }).sort({ createdAt: -1 });
+
+    res.json(tests);
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error fetching tests" });
+  }
+});
+
+
 router.delete("/:id", async (req, res) => {
   try {
 
-    const prescription = await Prescription.findById(req.params.id);
+    const test = await Test.findById(req.params.id);
 
-    if (!prescription) {
-      return res.status(404).json({ message: "Prescription not found" });
+    if (!test) {
+      return res.status(404).json({ message: "Test not found" });
     }
 
 
-    for (const img of prescription.images) {
+    for (const img of test.images) {
       if (img.public_id) {
         await cloudinary.uploader.destroy(img.public_id);
       }
     }
 
+    await Test.findByIdAndDelete(req.params.id);
 
-    await Prescription.findByIdAndDelete(req.params.id);
-
-    res.json({ message: "Deleted successfully" });
+    res.json({ message: "Tests deleted successfully" });
 
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: "Delete failed" });
-  }
-});
-
-router.get("/user/:userId", async (req, res) => {
-  try {
-    const prescriptions = await Prescription.find({
-      userId: req.params.userId,
-    }).sort({ createdAt: -1 });
-
-    res.json(prescriptions);
-
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: "Error fetching prescriptions" });
   }
 });
 

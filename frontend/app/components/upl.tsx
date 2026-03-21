@@ -38,7 +38,7 @@ const cardData: BentoCardProps[] = [
     title: 'Test',
     description: 'Track your test analytics and monitor your health trends over time.',
     label: 'Test analytics',
-    href: '/test'
+    href: '/medicaltest'
   },
   {
     color: '#060010',
@@ -66,7 +66,7 @@ const cardData: BentoCardProps[] = [
     title: 'Links',
     description: 'Generate shareable links for prescriptions and medical documents',
     label: 'Share Records',
-    href: '/share'
+    href: '/sharelink'
   },
   {
     color: '#060010',

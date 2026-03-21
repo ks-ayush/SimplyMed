@@ -4,24 +4,24 @@ import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 
 
-const InsightsPage = () => {
+const TestsPage = () => {
   const { userId } = useAuth();
   const [add, setAdd] = useState(false);
   const [image, setImage] = useState(null);
   const [description, setDescription] = useState("");
-  const [insights, setInsights] = useState([]);
+  const [tests, setTests] = useState([]);
   const [view, setView] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const handleAddInsights = async () => {
+  const handleAddTests = async () => {
 
     if (!description) {
-      alert("Please enter a description for the medical insight to identify it.");
+      alert("Please enter a name for the medical test to identify it.");
       return;
     }
 
     if (!image) {
-      alert("Please select a medicines image before uploading.");
+      alert("Please select a medical test report image before uploading.");
       return;
     }
 
@@ -33,7 +33,7 @@ const InsightsPage = () => {
 
 
       const res = await axios.post(
-        "http://localhost:5000/insights/upload",
+        "http://localhost:5000/tests/upload",
         formData,
         {
           headers: {
@@ -43,7 +43,7 @@ const InsightsPage = () => {
       );
 
       
-      alert("Medical insight uploaded successfully");
+      alert("Medical test report uploaded successfully");
 
       setImage(null);
       setDescription("");
@@ -55,14 +55,14 @@ const InsightsPage = () => {
     }
   };
 
-  const handleViewInsights = async () => {
+  const handleViewTests = async () => {
     try {
 
       const res = await axios.get(
-        `http://localhost:5000/insights/user/${userId}`
+        `http://localhost:5000/tests/user/${userId}`
       );
 
-      setInsights(res.data);
+      setTests(res.data);
       setView(true);
 
     } catch (error) {
@@ -73,13 +73,13 @@ const InsightsPage = () => {
   const handleDelete = async (id) => {
     try {
 
-      await axios.delete(`http://localhost:5000/insights/${id}`);
+      await axios.delete(`http://localhost:5000/tests/${id}`);
 
-      setInsights((prev) =>
+      setTests((prev) =>
         prev.filter((p) => p._id !== id)
       );
 
-      alert("Medical insight deleted");
+      alert("Medical test report deleted");
 
     } catch (error) {
       console.log(error);
@@ -103,10 +103,10 @@ const InsightsPage = () => {
     <main className="min-h-screen bg-gray-100">
       <div className="container mx-auto py-10 flex justify-center items-center flex-col">
         <h1 className="text-3xl text-black font-bold mb-6">
-          Medical insights Page
+          Medical Tests Reports Page
         </h1>
         <p className="text-gray-700">
-          This is where you can view and manage your medical insights.
+          This is where you can view and manage your medical tests reports.
         </p>
       </div>
 
@@ -115,11 +115,11 @@ const InsightsPage = () => {
           onClick={() => setAdd(true)}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
         >
-          Add Medical Insights
+          Add Medical Tests Reports
         </button>
 
-        <button onClick={handleViewInsights} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-4">
-          View Medical Insights
+        <button onClick={handleViewTests} className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded ml-4">
+          View Medical Tests Reports
         </button>
       </div>
 
@@ -127,14 +127,14 @@ const InsightsPage = () => {
         <div className="container mx-auto py-16 flex justify-center items-center flex-col">
 
           <h2 className="text-3xl text-blue-600 font-bold mb-6">
-            Upload Prescribed Medicines
+            Upload Medical Test Report
           </h2>
 
           <form className="w-full max-w-md bg-white shadow-xl rounded-xl p-6 border">
 
             <div className="mb-6">
               <label className="block text-gray-700 text-sm font-bold mb-3">
-                Prescribed Medicines Image
+                Medical Test Report Image
               </label>
 
               <label className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 rounded-lg cursor-pointer hover:border-blue-400 transition">
@@ -147,7 +147,7 @@ const InsightsPage = () => {
                   />
                 ) : (
                   <span className="text-gray-500 text-sm">
-                    Click to Upload Prescribed Medicines Image
+                    Click to Upload Medical Test Report Image
                   </span>
                 )}
 
@@ -169,14 +169,14 @@ const InsightsPage = () => {
               <input
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="border border-b-gray-500 my-3.5 h-24 text-black w-full rounded-md pt-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="border border-b-gray-500 my-3.5 h-14 text-black w-full rounded-md pt-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 type="text"
-                placeholder="Enter medical insights or notes about the medicines"
+                placeholder="Enter medical test report name"
               />
             </div>
 
             <div className="flex justify-center gap-10">
-              <button type="button" onClick={handleAddInsights} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Save Insights </button>
+              <button type="button" onClick={handleAddTests} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Save Test Report </button>
               <button type="button" onClick={() => setAdd(false)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg shadow-md transition" > Close </button> </div>
 
           </form>
@@ -187,17 +187,17 @@ const InsightsPage = () => {
         <div className="container mx-auto py-12">
 
           <h2 className="text-3xl font-bold text-center mb-10 text-blue-600">
-            Your Medical Insights
+            Your Medical Tests reports
           </h2>
 
-          {insights.length === 0 ? (
+          {tests.length === 0 ? (
             <p className="text-center text-gray-500">
-              No medical insights uploaded yet.
+              No medical tests reports uploaded yet.
             </p>
           ) : (
             <div className="mx-3 grid md:grid-cols-3 gap-8">
 
-              {insights.map((p) => (
+              {tests.map((p) => (
 
                 <div
                   key={p._id}
@@ -206,7 +206,7 @@ const InsightsPage = () => {
 
                   <img
                     src={p.images[0].url}
-                    alt="insight"
+                    alt="test report"
                     className="w-full h-48 object-cover cursor-pointer"
                     onClick={() => setSelectedImage(p.images[0].url)}
                   />
@@ -277,4 +277,4 @@ const InsightsPage = () => {
   );
 };
 
-export default InsightsPage;
+export default TestsPage;

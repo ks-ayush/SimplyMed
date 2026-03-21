@@ -12,7 +12,7 @@ export default function Dashboard() {
           <a href="/" className="hover:text-blue-500 cursor-pointer">AI Assistant</a>
           <a href="/insights" className="hover:text-blue-500 cursor-pointer">Medical Insights</a>
           <a href="/prescriptions" className="hover:text-blue-500 cursor-pointer">Prescriptions</a>
-          <a href="/" className="hover:text-blue-500 cursor-pointer">Test Analysis</a>
+          <a href="/medicaltest" className="hover:text-blue-500 cursor-pointer">Test Analysis</a>
         </nav>
       </aside>
 
@@ -28,7 +28,7 @@ export default function Dashboard() {
         <div className="flex flex-col   md:grid grid-cols-3 gap-6 mb-10">
           
           <div className="bg-white p-6 rounded-xl shadow">
-            <h3 className="text-gray-500">Links Shared</h3>
+            <h3 className="text-gray-500">Medicines List uploaded</h3>
             <p className="text-2xl font-bold mt-2">124</p>
           </div>
 

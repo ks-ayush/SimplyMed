@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-const prescriptionSchema = new mongoose.Schema({
+const insightSchema = new mongoose.Schema({
 
   userId: String,
 
@@ -19,4 +19,4 @@ const prescriptionSchema = new mongoose.Schema({
   }
 });
 
-export default mongoose.model("Prescription", prescriptionSchema);
+export default mongoose.model("Insight", insightSchema);
