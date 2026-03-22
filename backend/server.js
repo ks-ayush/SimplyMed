@@ -5,6 +5,7 @@ import connectDB from "./config/db.js";
 import prescriptionrouter from "./routes/prescriptionrouter.js";
 import insightsrouter from "./routes/insightsrouter.js";
 import testsrouter from "./routes/testsrouter.js";
+import shareRouter from "./routes/sharerouter.js";
 dotenv.config();
 const app = express();
 
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 app.use("/prescriptions", prescriptionrouter);
 app.use("/insights", insightsrouter);
 app.use("/tests", testsrouter);
+app.use("/share", shareRouter);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on port ${process.env.PORT}`);

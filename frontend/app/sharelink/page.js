@@ -11,9 +11,10 @@ const SharePage = () => {
     const [viewp, setViewp] = useState(false);
     const [viewi, setViewi] = useState(false);
     const [viewt, setViewt] = useState(false);
+    const [newlink, setNewlink] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
 
-   
+
 
     const handleViewAll = async () => {
         try {
@@ -35,6 +36,19 @@ const SharePage = () => {
         }
     };
 
+    const handleShare = async () => {
+        const res = await axios.post("http://localhost:5000/share/create", {
+            userId
+        });
+        try {
+        const link = res.data.link;
+        setNewlink(link);
+        alert("Link generated successfully");
+        } catch (err) {
+            
+            alert("Error generating link");
+        }
+    };
 
     return (
         <main className='min-h-screen bg-gray-100'>
@@ -52,8 +66,17 @@ const SharePage = () => {
                 <button onClick={handleViewAll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">
                     View All Uploads
                 </button>
+                <button onClick={handleShare} className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded ml-4">
+                    Generate Shareable Link
+                </button>
             </div>
-
+            {newlink && (
+                <div className="container mx-auto my-10 py-4">
+                    <p className="text-center text-green-600 font-semibold">
+                        Shareable Link: <a href={newlink} className="text-blue-500 underline">{newlink}</a>
+                    </p>
+                </div>
+            )}
             {viewp && (
                 <div className="container mx-auto py-12">
 
@@ -92,7 +115,7 @@ const SharePage = () => {
                                             {new Date(p.createdAt).toLocaleDateString()}
                                         </p>
 
-                                        
+
 
                                     </div>
 
@@ -144,7 +167,7 @@ const SharePage = () => {
                                             {new Date(p.createdAt).toLocaleDateString()}
                                         </p>
 
-                                        
+
 
                                     </div>
 
@@ -196,7 +219,7 @@ const SharePage = () => {
                                             {new Date(p.createdAt).toLocaleDateString()}
                                         </p>
 
-                                        
+
 
                                     </div>
 
@@ -209,7 +232,7 @@ const SharePage = () => {
 
                 </div>
             )}
-      
+
 
 
         </main>
