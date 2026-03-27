@@ -3,6 +3,7 @@ import React from 'react'
 import { useState } from 'react';
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
+import { Copy } from "lucide-react";
 const SharePage = () => {
     const { userId } = useAuth();
     const [insights, setInsights] = useState([]);
@@ -14,6 +15,11 @@ const SharePage = () => {
     const [newlink, setNewlink] = useState("");
     const [selectedImage, setSelectedImage] = useState(null);
 
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText(newlink);
+        alert("Link copied!");
+    };
 
 
     const handleViewAll = async () => {
@@ -41,11 +47,11 @@ const SharePage = () => {
             userId
         });
         try {
-        const link = res.data.link;
-        setNewlink(link);
-        alert("Link generated successfully");
+            const link = res.data.link;
+            setNewlink(link);
+            alert("Link generated successfully");
         } catch (err) {
-            
+
             alert("Error generating link");
         }
     };
@@ -60,9 +66,7 @@ const SharePage = () => {
                     This is where you can view all your uploads. You can also share the records with your doctor or family members.
                 </p>
             </div>
-
             <div className="flex justify-center">
-
                 <button onClick={handleViewAll} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-4">
                     View All Uploads
                 </button>
@@ -71,10 +75,22 @@ const SharePage = () => {
                 </button>
             </div>
             {newlink && (
-                <div className="container mx-auto my-10 py-4">
-                    <p className="text-center text-green-600 font-semibold">
-                        Shareable Link: <a href={newlink} className="text-blue-500 underline">{newlink}</a>
-                    </p>
+                <div className="container mx-auto my-10 flex justify-center">
+                    <div className="flex items-center gap-3 bg-black px-4 py-3 rounded-lg shadow-md">
+                        <a
+                            href={newlink}
+                            target="_blank"
+                            className="text-blue-500 underline max-w-xs truncate"
+                        >
+                            {newlink}
+                        </a>
+                        <button
+                            onClick={handleCopy}
+                            className="p-2 rounded-md hover:bg-green-500 transition"
+                        >
+                            <Copy size={18} />
+                        </button>
+                    </div>
                 </div>
             )}
             {viewp && (
