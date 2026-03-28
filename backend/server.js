@@ -15,7 +15,7 @@ app.use(
   cors({
     origin: [
       "http://localhost:3000",
-      "https://frontend-domain.vercel.app"
+      "https://simply-med.vercel.app/",
     ],
     credentials: true,
   })
