@@ -33,7 +33,7 @@ const PrescriptionPage = () => {
 
 
       const res = await axios.post(
-        "http://localhost:5000/prescriptions/upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/prescriptions/upload`,
         formData,
         {
           headers: {
@@ -59,7 +59,7 @@ const PrescriptionPage = () => {
     try {
 
       const res = await axios.get(
-        `http://localhost:5000/prescriptions/user/${userId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/prescriptions/user/${userId}`
       );
 
       setPrescriptions(res.data);
@@ -73,7 +73,7 @@ const PrescriptionPage = () => {
   const handleDelete = async (id) => {
     try {
 
-      await axios.delete(`http://localhost:5000/prescriptions/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/prescriptions/${id}`);
 
       setPrescriptions((prev) =>
         prev.filter((p) => p._id !== id)

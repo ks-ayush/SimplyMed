@@ -25,9 +25,9 @@ const SharePage = () => {
     const handleViewAll = async () => {
         try {
             const [pRes, iRes, tRes] = await Promise.all([
-                axios.get(`http://localhost:5000/prescriptions/user/${userId}`),
-                axios.get(`http://localhost:5000/insights/user/${userId}`),
-                axios.get(`http://localhost:5000/tests/user/${userId}`)
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/prescriptions/user/${userId}`),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/insights/user/${userId}`),
+                axios.get(`${process.env.NEXT_PUBLIC_API_URL}/tests/user/${userId}`)
             ]);
 
             setPrescriptions(pRes.data);
@@ -43,7 +43,7 @@ const SharePage = () => {
     };
 
     const handleShare = async () => {
-        const res = await axios.post("http://localhost:5000/share/create", {
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/share/create`, {
             userId
         });
         try {

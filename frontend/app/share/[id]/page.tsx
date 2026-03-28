@@ -12,7 +12,7 @@ export default function SharePage() {
         if (!params?.id) return;
 
         axios
-            .get(`http://localhost:5000/share/${params.id}`)
+            .get(`${process.env.NEXT_PUBLIC_API_URL}/share/${params.id}`)
             .then((res) => setData(res.data));
     }, [params]);
 

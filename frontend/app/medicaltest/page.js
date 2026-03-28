@@ -33,7 +33,7 @@ const TestsPage = () => {
 
 
       const res = await axios.post(
-        "http://localhost:5000/tests/upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/tests/upload`,
         formData,
         {
           headers: {
@@ -59,7 +59,7 @@ const TestsPage = () => {
     try {
 
       const res = await axios.get(
-        `http://localhost:5000/tests/user/${userId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/tests/user/${userId}`
       );
 
       setTests(res.data);
@@ -73,7 +73,7 @@ const TestsPage = () => {
   const handleDelete = async (id) => {
     try {
 
-      await axios.delete(`http://localhost:5000/tests/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/tests/${id}`);
 
       setTests((prev) =>
         prev.filter((p) => p._id !== id)

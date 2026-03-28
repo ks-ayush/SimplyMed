@@ -33,7 +33,7 @@ const InsightsPage = () => {
 
 
       const res = await axios.post(
-        "http://localhost:5000/insights/upload",
+        `${process.env.NEXT_PUBLIC_API_URL}/insights/upload`,
         formData,
         {
           headers: {
@@ -59,7 +59,7 @@ const InsightsPage = () => {
     try {
 
       const res = await axios.get(
-        `http://localhost:5000/insights/user/${userId}`
+        `${process.env.NEXT_PUBLIC_API_URL}/insights/user/${userId}`
       );
 
       setInsights(res.data);
@@ -73,7 +73,7 @@ const InsightsPage = () => {
   const handleDelete = async (id) => {
     try {
 
-      await axios.delete(`http://localhost:5000/insights/${id}`);
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/insights/${id}`);
 
       setInsights((prev) =>
         prev.filter((p) => p._id !== id)
