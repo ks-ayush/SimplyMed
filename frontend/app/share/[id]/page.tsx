@@ -1,110 +1,131 @@
 "use client";
+
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "next/navigation";
 
-export default function SharePage() {
-    const params = useParams();
-    const [data, setData] = useState(null);
-     const [selectedImage, setSelectedImage] = useState(null);
-
-    useEffect(() => {
-        if (!params?.id) return;
-
-        axios
-            .get(`${process.env.NEXT_PUBLIC_API_URL}/share/${params.id}`)
-            .then((res) => setData(res.data));
-    }, [params]);
-
-    if (!data) return <p>Loading...</p>;
-
-    return (
-        <main className="min-h-screen bg-gray-100">
-
-            <h1 className="text-3xl font-bold text-center py-8 text-blue-600">
-                Shared Medical Records
-            </h1>
-
-
-            <Section
-                title="Prescriptions"
-                data={data.prescriptions}
-                setSelectedImage={setSelectedImage}
-            />
-
-            <Section
-                title="Medical Insights"
-                data={data.insights}
-                setSelectedImage={setSelectedImage}
-            />
-
-           
-            <Section
-                title="Test Reports"
-                data={data.tests}
-                setSelectedImage={setSelectedImage}
-            />
-
-            
-            {selectedImage && (
-                <div
-                    className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
-                    onClick={() => setSelectedImage(null)}
-                >
-                    <img
-                        src={selectedImage}
-                        className="max-h-[80%] rounded-lg shadow-lg"
-                    />
-                </div>
-            )}
-        </main>
-    );
+interface ImageItem {
+  url: string;
 }
 
+interface RecordItem {
+  _id: string;
+  description: string;
+  createdAt: string;
+  images: ImageItem[];
+}
 
-const Section = ({ title, data, setSelectedImage }) => {
-    return (
-        <div className="container mx-auto py-10">
+interface ShareData {
+  prescriptions: RecordItem[];
+  insights: RecordItem[];
+  tests: RecordItem[];
+}
 
-            <h2 className="text-2xl font-bold text-center mb-8 text-blue-600">
-                {title}
-            </h2>
+interface SectionProps {
+  title: string;
+  data: RecordItem[];
+  setSelectedImage: React.Dispatch<React.SetStateAction<string | null>>;
+}
 
-            {data.length === 0 ? (
-                <p className="text-center text-gray-500">
-                    No data available.
-                </p>
-            ) : (
-                <div className="mx-3 grid md:grid-cols-3 gap-8">
+export default function SharePage() {
+  const params = useParams();
 
-                    {data.map((item) => (
-                        <div
-                            key={item._id}
-                            className="bg-white shadow-lg rounded-xl overflow-hidden border hover:shadow-2xl transition"
-                        >
+  const [data, setData] = useState<ShareData | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-                            <img
-                                src={item.images[0]?.url}
-                                alt="record"
-                                className="w-full h-48 object-cover cursor-pointer"
-                                onClick={() => setSelectedImage(item.images[0]?.url)}
-                            />
+  useEffect(() => {
+    if (!params?.id) return;
 
-                            <div className="p-4">
-                                <p className="text-gray-800 font-semibold mb-2">
-                                    {item.description}
-                                </p>
+    axios
+      .get(`${process.env.NEXT_PUBLIC_API_URL}/share/${params.id}`)
+      .then((res) => setData(res.data))
+      .catch((err) => console.error(err));
+  }, [params]);
 
-                                <p className="text-gray-400 text-sm">
-                                    {new Date(item.createdAt).toLocaleDateString()}
-                                </p>
-                            </div>
+  if (!data) return <p>Loading...</p>;
 
-                        </div>
-                    ))}
+  return (
+    <main className="min-h-screen bg-gray-100">
+      <h1 className="text-3xl font-bold text-center py-8 text-blue-600">
+        Shared Medical Records
+      </h1>
 
-                </div>
-            )}
+      <Section
+        title="Prescriptions"
+        data={data.prescriptions}
+        setSelectedImage={setSelectedImage}
+      />
+
+      <Section
+        title="Medical Insights"
+        data={data.insights}
+        setSelectedImage={setSelectedImage}
+      />
+
+      <Section
+        title="Test Reports"
+        data={data.tests}
+        setSelectedImage={setSelectedImage}
+      />
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            className="max-h-[80%] rounded-lg shadow-lg"
+            alt="Selected medical record"
+          />
         </div>
-    );
+      )}
+    </main>
+  );
+}
+
+const Section = ({
+  title,
+  data,
+  setSelectedImage,
+}: SectionProps) => {
+  return (
+    <div className="container mx-auto py-10">
+      <h2 className="text-2xl font-bold text-center mb-8 text-blue-600">
+        {title}
+      </h2>
+
+      {data.length === 0 ? (
+        <p className="text-center text-gray-500">No data available.</p>
+      ) : (
+        <div className="mx-3 grid md:grid-cols-3 gap-8">
+          {data.map((item) => (
+            <div
+              key={item._id}
+              className="bg-white shadow-lg rounded-xl overflow-hidden border hover:shadow-2xl transition"
+            >
+              <img
+                src={item.images[0]?.url}
+                alt="record"
+                className="w-full h-48 object-cover cursor-pointer"
+                onClick={() =>
+                  setSelectedImage(item.images[0]?.url || null)
+                }
+              />
+
+              <div className="p-4">
+                <p className="text-gray-800 font-semibold mb-2">
+                  {item.description}
+                </p>
+
+                <p className="text-gray-400 text-sm">
+                  {new Date(item.createdAt).toLocaleDateString()}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 };
