@@ -70,10 +70,10 @@ const cardData: BentoCardProps[] = [
   },
   {
     color: '#060010',
-    title: 'AI Assistance',
-    description: 'get insights on doctor advice and medications to better understand treatments and possible precautions',
-    label: 'use AI for free',
-    href: '/ai'
+    title: 'Map',
+    description: 'Legally operating hospital and pharmacy locator',
+    label: 'Nearby hospitals and pharmacies',
+    href: '/map'
   }
 ];
 
