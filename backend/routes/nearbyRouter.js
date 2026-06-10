@@ -1,25 +1,33 @@
 import express from "express";
+import axios from "axios";
 
 const router = express.Router();
 
-router.get("/nearby", async (req, res) => {
-  const { lat, lng } = req.query;
+router.get("/", async (req, res) => {
+  try {
+    const { lat, lng } = req.query;
 
-  const query = `
-    [out:json];
-    (
-      node["amenity"="hospital"](around:5000,${lat},${lng});
-      node["amenity"="pharmacy"](around:5000,${lat},${lng});
+    const response = await axios.get(
+      "https://api.geoapify.com/v2/places",
+      {
+        params: {
+          categories:
+            "healthcare.hospital,healthcare.pharmacy",
+          filter: `circle:${lng},${lat},5000`,
+          limit: 10,
+          apiKey: process.env.GEO_API_KEY,
+        },
+      }
     );
-    out;
-  `;
 
-  const response = await axios.post(
-    "https://overpass-api.de/api/interpreter",
-    query
-  );
+    res.json(response.data.features);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
 
-  res.json(response.data.elements);
+    res.status(500).json({
+      message: "Failed to fetch nearby facilities",
+    });
+  }
 });
 
 export default router;

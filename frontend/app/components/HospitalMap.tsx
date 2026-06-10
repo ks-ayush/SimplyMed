@@ -9,8 +9,8 @@ import {
 } from "react-leaflet";
 import { useEffect } from "react";
 import L from "leaflet";
-
 import "leaflet/dist/leaflet.css";
+
 
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 
@@ -22,6 +22,23 @@ L.Icon.Default.mergeOptions({
   shadowUrl:
     "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
+
+interface Place {
+  properties: {
+    place_id: string;
+    name?: string;
+    categories?: string[];
+  };
+  geometry: {
+    coordinates: [number, number]; 
+  };
+}
+
+interface HospitalMapProps {
+  lat: number;
+  lng: number;
+  hospitals: Place[];
+}
 
 function ChangeView({
   center,
@@ -37,21 +54,17 @@ function ChangeView({
   return null;
 }
 
-interface HospitalMapProps {
-  lat: number;
-  lng: number;
-}
-
 export default function HospitalMap({
   lat,
   lng,
+  hospitals,
 }: HospitalMapProps) {
   return (
     <MapContainer
       center={[lat, lng]}
       zoom={13}
       style={{
-        height: "500px",
+        height: "600px",
         width: "100%",
       }}
     >
@@ -62,9 +75,53 @@ export default function HospitalMap({
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
 
+      
       <Marker position={[lat, lng]}>
-        <Popup>Your Current Location</Popup>
+        <Popup>
+          <div>
+            <h3 className="font-bold">Your Location</h3>
+            <p>
+              {lat.toFixed(4)}, {lng.toFixed(4)}
+            </p>
+          </div>
+        </Popup>
       </Marker>
+
+    
+      {hospitals.map((hospital) => {
+        const [lngCoord, latCoord] =
+          hospital.geometry.coordinates;
+
+        return (
+          <Marker
+            key={hospital.properties.place_id}
+            position={[latCoord, lngCoord]}
+          >
+            <Popup>
+              <div>
+                <h3 className="font-bold">
+                  {hospital.properties.name ||
+                    "Unnamed Facility"}
+                </h3>
+
+                <p>
+                  Type:{" "}
+                  {hospital.properties.categories?.[0] ||
+                    "Healthcare Facility"}
+                </p>
+
+                <p>
+                  Lat: {latCoord.toFixed(4)}
+                </p>
+
+                <p>
+                  Lon: {lngCoord.toFixed(4)}
+                </p>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </MapContainer>
   );
 }
