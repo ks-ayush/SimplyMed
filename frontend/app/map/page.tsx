@@ -18,7 +18,7 @@ interface Place {
     categories?: string[];
   };
   geometry: {
-    coordinates: [number, number];  
+    coordinates: [number, number];
   };
 }
 
@@ -31,6 +31,7 @@ export default function MapPage() {
   const [hospitals, setHospitals] = useState<Place[]>([]);
   const [hasLocation, setHasLocation] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [search, setSearch] = useState("");
 
   const handleMap = () => {
     navigator.geolocation.getCurrentPosition(
@@ -136,13 +137,22 @@ export default function MapPage() {
             )}
           </div>
 
-          <div className="w-full border-2 border-blue-500 rounded-lg bg-white mt-6 p-2">
+          <div className="w-full mt-6 flex flex-row">
             <input
               type="text"
               placeholder="Search Hospitals"
-              className="w-full outline-none text-black"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="flex-1 border-2 border-blue-500 rounded-l-lg p-2 outline-none text-black"
             />
+
+            <button
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded-r-lg"
+            >
+              Search
+            </button>
           </div>
+
         </div>
 
         <div className="px-4">
