@@ -32,6 +32,7 @@ export default function MapPage() {
   const [hasLocation, setHasLocation] = useState(false);
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
+  const [cat, setCat] = useState("");
 
   const handleMap = () => {
     navigator.geolocation.getCurrentPosition(
@@ -48,6 +49,38 @@ export default function MapPage() {
       }
     );
   };
+  const handlesearch=async()=>{
+    try{
+      setLoading(true);
+      if (!search){
+        setLoading(false);
+        alert("Please enter search term");
+        return;
+      }
+      if (!hasLocation) {
+        setLoading(false);
+        alert("Please share your location first");
+        return;
+      }
+      const searchresponse = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/nearby/search`,
+        {
+          params: {
+            query: search,
+            lat: location.lat,
+            lng: location.lng,
+          },
+        }
+      );
+      setHospitals(searchresponse.data);
+      setSearch("");
+    } catch (error) {
+      console.error(error);
+      alert("Error fetching search results.Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const fetchNearbyPlaces = async () => {
     try {
@@ -59,6 +92,7 @@ export default function MapPage() {
           params: {
             lat: location.lat,
             lng: location.lng,
+            category: cat,
           },
         }
       );
@@ -68,6 +102,7 @@ export default function MapPage() {
       setHospitals(response.data);
     } catch (error) {
       console.error(error);
+      alert("Error fetching nearby places.Please try again.");
     } finally {
       setLoading(false);
     }
@@ -136,6 +171,17 @@ export default function MapPage() {
               ))
             )}
           </div>
+          <div className="w-full mt-6 flex flex-row my-4">
+            <select className="flex-1 border-2 border-blue-500 rounded-lg p-2 outline-none text-black" value={cat} onChange={(e) => setCat(e.target.value)}>
+              <option value="">Select Categories</option>
+              {/* <option value="healthcare.doctor">Doctors</option> */}
+              <option value="healthcare.hospital">Hospitals</option>
+              {/* <option value="healthcare.clinic">Clinics</option> */}
+              <option value="healthcare.pharmacy">Pharmacies</option>
+              <option value="healthcare.dentist">Dentists</option>
+
+            </select>
+          </div>
 
           <div className="w-full mt-6 flex flex-row">
             <input
@@ -148,6 +194,7 @@ export default function MapPage() {
 
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold px-4 rounded-r-lg"
+              onClick={handlesearch}
             >
               Search
             </button>
