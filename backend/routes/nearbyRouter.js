@@ -3,6 +3,44 @@ import axios from "axios";
 import client from "../config/client.js";
 const router = express.Router();
 
+router.get("/details", async (req, res) => {
+  try {
+    const { lat, lng, destination_lat, destination_lng } = req.query;
+    const cachevalue = await client.get("directions:" + lat + ":" + lng + ":" + destination_lat + ":" + destination_lng);
+    if (cachevalue) {
+      console.log("Cache hit");
+      return res.json(JSON.parse(cachevalue));
+    }
+    const response = await axios.get(
+      "https://api.geoapify.com/v1/routing",
+      {
+        params: {
+          waypoints: `${lat},${lng}|${destination_lat},${destination_lng}`,
+          mode: "drive",
+          details: "instructions",
+          apiKey: process.env.GEO_API_KEY,
+        }
+      }
+    );
+    const route = response.data.features[0];
+
+    const result = {
+      distance: route.properties.distance,
+      duration: route.properties.time,
+      coordinates: route.geometry.coordinates,
+      steps: route.properties.legs[0].steps,
+    };
+    await client.set("directions:" + lat + ":" + lng + ":" + destination_lat + ":" + destination_lng, JSON.stringify(result));
+    await client.expire("directions:" + lat + ":" + lng + ":" + destination_lat + ":" + destination_lng, 3600);
+    res.json(result);
+  } catch (error) {
+    console.error(error.response?.data || error.message);
+    res.status(500).json({
+      message: "Failed to fetch directions",
+    });
+  }
+})
+
 router.get("/search", async (req, res) => {
   try {
     const { lat, lng, query } = req.query;

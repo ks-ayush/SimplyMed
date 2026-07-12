@@ -22,6 +22,11 @@ interface Place {
   };
 }
 
+interface MoreDetails {
+  distance: number;
+  duration: number;
+  coordinates: [number, number];
+}
 export default function MapPage() {
   const [location, setLocation] = useState({
     lat: 25.5941,
@@ -33,6 +38,9 @@ export default function MapPage() {
   const [loading, setLoading] = useState(false);
   const [search, setSearch] = useState("");
   const [cat, setCat] = useState("");
+  const [more, setMore] = useState<MoreDetails | null>(null);
+  const [placeid, setPlaceid] = useState<string | null>(null);
+  // const [showloading, setShowloading] = useState(false);
 
   const handleMap = () => {
     navigator.geolocation.getCurrentPosition(
@@ -49,10 +57,37 @@ export default function MapPage() {
       }
     );
   };
-  const handlesearch=async()=>{
-    try{
+
+  const handleseemore = async (place: string, coordinates: [number, number]) => {
+    try {
+      if (!hasLocation) {
+        alert("Please share your location first");
+        return;
+      }
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/nearby/details`,
+        {
+          params: {
+            lat:location.lat,
+            lng:location.lng,
+            destination_lat:coordinates[1],
+            destination_lng:coordinates[0],
+          },
+        }
+      );
+      setPlaceid(place);
+      setMore(response.data);
+
+    } catch (error) {
+      console.error(error);
+      alert("Error fetching more details.Please try again.");
+    }
+  };
+
+  const handlesearch = async () => {
+    try {
       setLoading(true);
-      if (!search){
+      if (!search) {
         setLoading(false);
         alert("Please enter search term");
         return;
@@ -112,7 +147,7 @@ export default function MapPage() {
     if (hasLocation) {
       fetchNearbyPlaces();
     }
-  }, [location, hasLocation]);
+  }, [location, hasLocation, cat]);
 
   return (
     <main className="min-h-screen bg-gray-100">
@@ -158,15 +193,30 @@ export default function MapPage() {
                   key={hospital.properties.place_id}
                   className="border rounded p-3 mb-2 text-black"
                 >
-                  <h3 className="font-semibold">
+                  <h3 className="flex justify-between font-semibold">
                     {hospital.properties.name ||
                       "Unnamed Facility"}
+                    <button onClick={() => handleseemore(hospital.properties.place_id, hospital.geometry.coordinates)} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded">
+                      See More
+                    </button>
+
                   </h3>
 
                   <p className="text-sm text-gray-600">
                     {hospital.properties.categories?.[0] ||
                       "Healthcare Facility"}
                   </p>
+
+                  {placeid === hospital.properties.place_id && more && (
+                    <div className="mt-2 border-t pt-2">
+                      <p className="text-sm text-gray-600">
+
+                        🛣️ Distance: {(more.distance / 1000).toFixed(2)} km 
+                        🕒 Time: {Math.ceil(more.duration / 60)} min
+
+                      </p>
+                    </div>
+                  )}
                 </div>
               ))
             )}
