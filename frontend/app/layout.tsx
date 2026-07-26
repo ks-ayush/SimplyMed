@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 
 import { ClerkProvider } from '@clerk/nextjs'
-
+import ReduxProvider from "./redux/provider.js";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 const geistSans = Geist({
@@ -31,11 +32,15 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <ReduxProvider>
+        
         <ClerkProvider>
         <Navbar />
-        {children}
+          {children}
         <Footer />
         </ClerkProvider>
+        
+        </ReduxProvider>
       </body>
     </html>
   );

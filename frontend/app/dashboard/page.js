@@ -40,7 +40,7 @@ export default function Dashboard() {
         <h2 className="text-2xl font-bold mb-8">SimplyMed</h2>
 
         <nav className="flex flex-col gap-4">
-          <a href="/ai" className="hover:text-blue-500 cursor-pointer">AI Assistant</a>
+          <a href="/map" className="hover:text-blue-500 cursor-pointer">Map</a>
           <a href="/insights" className="hover:text-blue-500 cursor-pointer">Medical Insights</a>
           <a href="/prescriptions" className="hover:text-blue-500 cursor-pointer">Prescriptions</a>
           <a href="/medicaltest" className="hover:text-blue-500 cursor-pointer">Test Analysis</a>

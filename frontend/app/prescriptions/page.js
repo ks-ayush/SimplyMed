@@ -108,6 +108,7 @@ const PrescriptionPage = () => {
         <p className="text-gray-700">
           This is where you can view and manage your prescriptions.
         </p>
+        
       </div>
 
       <div className="flex justify-center">
